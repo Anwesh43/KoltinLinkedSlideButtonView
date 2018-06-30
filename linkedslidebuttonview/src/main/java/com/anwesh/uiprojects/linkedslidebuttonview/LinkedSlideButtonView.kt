@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.linkedslidebuttonview
  * Created by anweshmishra on 30/06/18.
  */
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.MotionEvent
@@ -185,4 +186,12 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
         }
     }
 
+    companion object {
+
+        fun create(activity : Activity) : LinkedSlideButtonView {
+            val view : LinkedSlideButtonView = LinkedSlideButtonView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
