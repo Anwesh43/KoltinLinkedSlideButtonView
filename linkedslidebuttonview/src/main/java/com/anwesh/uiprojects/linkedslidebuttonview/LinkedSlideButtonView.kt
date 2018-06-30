@@ -6,6 +6,7 @@ package com.anwesh.uiprojects.linkedslidebuttonview
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.MotionEvent
 import android.graphics.*
@@ -41,9 +42,13 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
             scales[j] += dir * 0.1f
             if (Math.abs(scales[j] - prevScale) > 1) {
                 scales[j] = prevScale + dir
-                dir = 0f
-                prevScale = scales[j]
-                stopcb(prevScale)
+                j += dir.toInt()
+                if (j == scales.size || j == -1) {
+                    j -= dir.toInt()
+                    dir = 0f
+                    prevScale = scales[j]
+                    stopcb(prevScale)
+                }
             }
         }
 
@@ -115,7 +120,7 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
             val h : Float = canvas.height.toFloat()
             val gap : Float = w / SB_NODES
             val btnW = gap/3
-            val getX : (Int) -> Float = {index -> (gap - btnW) * state.scales[index]}
+            val getX : (Int) -> Float = {index -> (gap) * state.scales[index]}
             val hBar : Float = h/10
             canvas.save()
             canvas.translate(i * gap, h/2)
@@ -190,6 +195,7 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
 
         fun create(activity : Activity) : LinkedSlideButtonView {
             val view : LinkedSlideButtonView = LinkedSlideButtonView(activity)
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             activity.setContentView(view)
             return view
         }
