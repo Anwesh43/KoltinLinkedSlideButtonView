@@ -11,7 +11,7 @@ import android.view.View
 import android.view.MotionEvent
 import android.graphics.*
 
-val SB_NODES : Int = 5
+val SB_NODES : Int = 3
 val buttonColor : Int = Color.parseColor("#f44336")
 val slideColor : Int = Color.parseColor("#F5F5F5")
 
@@ -20,6 +20,8 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private val renderer : Renderer = Renderer(this)
+
+    var linkedSlideButtonListener : LinkedSlideButtonListener? = null
 
     override fun onDraw(canvas : Canvas) {
         renderer.render(canvas, paint)
@@ -32,6 +34,10 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
             }
         }
         return true
+    }
+
+    fun addOnCompleteListener(onComplete : (Int) -> Unit) {
+        linkedSlideButtonListener = LinkedSlideButtonListener(onComplete)
     }
 
     data class State(var j : Int = 0, var dir : Float = 0f, var prevScale : Float = 0f) {
@@ -180,6 +186,9 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
             animator.animate {
                 lsb.update {j, scale ->
                     animator.stop()
+                    when(scale) {
+                        1f -> view.linkedSlideButtonListener?.onComplete?.invoke(j)
+                    }
                 }
             }
         }
@@ -200,4 +209,6 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
             return view
         }
     }
+
+    data class LinkedSlideButtonListener(var onComplete : (Int) -> Unit)
 }
