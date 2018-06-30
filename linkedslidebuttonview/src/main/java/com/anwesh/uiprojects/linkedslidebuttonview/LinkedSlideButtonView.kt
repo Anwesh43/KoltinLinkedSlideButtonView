@@ -136,7 +136,7 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
         }
     }
 
-    class LinkedSlideButton (var i : Int) {
+    data class LinkedSlideButton (var i : Int) {
 
         private var curr : SBNode = SBNode(0)
 
@@ -159,4 +159,28 @@ class LinkedSlideButtonView (ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer(var view : LinkedSlideButtonView) {
+
+        private val animator : Animator = Animator(view)
+
+        private val lsb : LinkedSlideButton = LinkedSlideButton(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            lsb.draw(canvas, paint)
+            animator.animate {
+                lsb.update {j, scale ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            lsb.startUpdating {
+                animator.start()
+            }
+        }
+    }
+
 }
